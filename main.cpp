@@ -3,6 +3,15 @@
 //Tristan Gaizka Mulyadi (672020006)
 //Rizky Bagus Pratama (672020311)
 
+/*
+	note:
+
+	Lantai = y = 0
+	Panjang Gedung 200 (-100 ~ 100)
+	Tinggi Gedung 80 (0 ~ 80)
+	Lebar Gedung 80 (-40 ~ 40)
+*/
+
 #include <windows.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -10,12 +19,12 @@
 using namespace std;
 
 #define DEGREES_PER_PIXEL 0.6f
-#define UNITS_PER_PIXEL 0.5f
+#define UNITS_PER_PIXEL 1.5f
 #define ZOOM_FACTOR 0.08f
 
 typedef struct
 {
-    bool leftButton;
+	bool leftButton;
 	bool rightButton;
 	int x;
 	int y;
@@ -28,48 +37,115 @@ MouseState mouseState = { false, false, 0, 0 };
 float xRotate = 0, yRotate = 0;
 
 /* setting posisi kamera dan orientasi  */
-GLfloat eye[] = { 0, 0, 60 };
-GLfloat at[] = { 0, 0, 0 };
+GLfloat eye[] = { 0, 0, 380 };
+GLfloat at[] = { 0, 40, 0 };
 
-void ShapeTest()
-{
-    glBegin(GL_LINES);
-        glColor3f(0, 0, 0);
-        // Axis-x
-            glVertex3f(-1000, 0, 0);
-            glVertex3f(1000, 0, 0);
-        // Axis-y
-            glVertex3f(0, -1000, 0);
-            glVertex3f(0, 1000, 0);
-        // Axis-z
-            glVertex3f(0, 0, -1000);
-            glVertex3f(0, 0, 1000);
-    glEnd();
+void Eksterior(){
+	glBegin(GL_LINES);
+	// Axis X-Y-Z
+	glColor3f(1, 1, 1);
+		glVertex3f(-1000, 0, 0);
+		glVertex3f(1000, 0, 0);
+		glVertex3f(0, -1000, 0);
+		glVertex3f(0, 1000, 0);
+		glVertex3f(0, 0, -1000);
+		glVertex3f(0, 0, 1000);
+	glEnd();
 
 	glBegin(GL_QUADS);
-        // DEPAN
-        glColor3f(1, 0, 0);
-            glVertex3f(-5, 5, 5);
-            glVertex3f(5, 5, 5);
-            glVertex3f(5, -5, 5);
-            glVertex3f(-5, -5, 5);
-        // BELAKANG
-            glVertex3f(-5, 5, -5);
-            glVertex3f(5, 5, -5);
-            glVertex3f(5, -5, -5);
-            glVertex3f(-5, -5, -5);
-        // ATAS
-        glColor3f(0, 1, 0);
-            glVertex3f(-5, 5, -5);
-            glVertex3f(5, 5, -5);
-            glVertex3f(5, 5, 5);
-            glVertex3f(-5, 5, 5);
-        // KANAN
-            glVertex3f(-5, 5, 5);
-            glVertex3f(-5, 5, -5);
-            glVertex3f(-5, -5, -5);
-            glVertex3f(-5, -5, 5);
-    glEnd();
+       /// ------------------------------ Basic-Wall & Floor
+       glColor3f(0.87, 0.80, 0.67);
+       //----- Depan
+		glVertex3f(-100, 0, 40);
+		glVertex3f(-100, 80, 40);
+		glVertex3f(100, 80, 40);
+		glVertex3f(100, 0, 40);
+	//----- Belakang
+		glVertex3f(-100, 0, -40);
+		glVertex3f(-100, 80, -40);
+		glVertex3f(100, 80, -40);
+		glVertex3f(100, 0, -40);
+	//----- Kiri
+		glVertex3f(-100, 0, -40);
+		glVertex3f(-100, 80, -40);
+		glVertex3f(-100, 80, 40);
+		glVertex3f(-100, 0, 40);
+	//----- Kiri
+		glVertex3f(100, 0, -40);
+		glVertex3f(100, 80, -40);
+		glVertex3f(100, 80, 40);
+		glVertex3f(100, 0, 40);
+	//----- Ground
+	glColor3f(0.65, 0.71, 0.76);
+		glVertex3f(-100 - 20, 0, -40 - 20);
+		glVertex3f(100 + 20, 0, -40 - 20);
+		glVertex3f(100 + 20, 0, 40 + 20);
+		glVertex3f(-100 - 20, 0, 40 + 20);
+
+	/// ------------------------------ Roof
+	//----- Platform
+	glColor3f(0.58, 0.53, 0.45);
+		glVertex3f(-100 - 12, 80, -40 - 12);
+		glVertex3f(100 + 12, 80, -40 - 12);
+		glVertex3f(100 + 12, 80, 40 + 12);
+		glVertex3f(-100 - 12, 80, 40 + 12);
+	//----- Sample
+	glColor3f(0.78, 0.73, 0.65);
+		glVertex3f(-100 + 12, 80 + 0.1, -40 + 18);
+		glVertex3f(100 - 12, 80 + 0.1, -40 + 18);
+		glVertex3f(100 - 12, 80 + 0.1, 40 - 18);
+		glVertex3f(-100 + 12, 80 + 0.1, 40 - 18);
+	//----- Grid Bawah
+	glColor3f(0.77, 0.52, 0.61);
+		// G.B Depan
+			glVertex3f(-100 - 12, 80, 40 + 12);
+			glVertex3f(-100 + 12, 80 + 15, 40 - 18);
+			glVertex3f(100 - 12, 80 + 15, 40 - 18);
+			glVertex3f(100 + 12, 80, 40 + 12);
+		// G.B Belakang
+			glVertex3f(-100 - 12, 80, -40 - 12);
+			glVertex3f(100 + 12, 80, -40 - 12);
+			glVertex3f(100 - 12, 80 + 15, -40 + 18);
+			glVertex3f(-100 + 12, 80 + 15, -40 + 18);
+		// G.B Kiri
+			glVertex3f(-100 - 12, 80, -40 - 12);
+			glVertex3f(-100 + 12, 80 + 15, -40 + 18);
+			glVertex3f(-100 + 12, 80 + 15, 40 - 18);
+			glVertex3f(-100 - 12, 80, 40 + 12);
+		// G.B Kanan
+			glVertex3f(100 + 12, 80, 40 + 12);
+			glVertex3f(100 - 12, 80 + 15, 40 - 18);
+			glVertex3f(100 - 12, 80 + 15, -40 + 18);
+			glVertex3f(100 + 12, 80, -40 - 12);
+	//----- Grid Atas
+	glColor3f(0.70, 0.52, 0.55);
+		// G.A Depan
+			glVertex3f(-100 + 12, 80 + 15, 40 - 18);
+			glVertex3f(-100 + 2, 80 + 35, 0);
+			glVertex3f(100 - 2, 80 + 35, 0);
+			glVertex3f(100 - 12, 80 + 15, 40 - 18);
+		// G.A Belakang
+			glVertex3f(-100 + 12, 80 + 15, -40 + 18);
+			glVertex3f(-100 + 2, 80 + 35, 0);
+			glVertex3f(100 - 2, 80 + 35, 0);
+			glVertex3f(100 - 12, 80 + 15, -40 + 18);
+		/**
+		G.A Samping (Kiri & Kanan) ada di GL_Triangle
+		*/
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	/// ------------------------------ Roof (Lanjutan Grid Atas)
+	glColor3f(0, 0, 0);
+		// Grid Kiri
+			glVertex3f(-100 + 12, 80 + 15, -40 + 18);
+			glVertex3f(-100 + 12, 80 + 35, 0);
+			glVertex3f(-100 + 12, 80 + 15, 40 - 18);
+		// Grid Kanan
+			glVertex3f(100 - 12, 80 + 15, -40 + 18);
+			glVertex3f(100 - 12, 80 + 35, 0);
+			glVertex3f(100 - 12, 80 + 15, 40 - 18);
+	glEnd();
 }
 
 void DrawScene()
@@ -78,7 +154,7 @@ void DrawScene()
 	glRotatef(xRotate, 0, 1, 0);
 	glRotatef(yRotate, 1, 0, 0);
 
-	ShapeTest();
+	Eksterior();
 }
 
 
@@ -137,21 +213,21 @@ void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-    case 'a':
-    case 'A':
-        SpecialKey(GLUT_KEY_LEFT, 0, 0);
+	case 'a':
+	case 'A':
+		SpecialKey(GLUT_KEY_LEFT, 0, 0);
 		break;
-    case 'd':
-    case 'D':
-        SpecialKey(GLUT_KEY_RIGHT, 0, 0);
+	case 'd':
+	case 'D':
+		SpecialKey(GLUT_KEY_RIGHT, 0, 0);
 		break;
-    case 'w':
-    case 'W':
-        SpecialKey(GLUT_KEY_UP, 0, 0);
+	case 'w':
+	case 'W':
+		SpecialKey(GLUT_KEY_UP, 0, 0);
 		break;
-    case 's':
-    case 'S':
-        SpecialKey(GLUT_KEY_DOWN, 0, 0);
+	case 's':
+	case 'S':
+		SpecialKey(GLUT_KEY_DOWN, 0, 0);
 		break;
 	case '+':	SpecialKey(GLUT_KEY_HOME, 0, 0);
 		break;
@@ -212,7 +288,7 @@ void MouseMove(int x, int y)
 
 void myInit()
 {
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClearColor(0.1, 0.1, 0.1, 1);
 
 	/* Setting proyeksi perspective */
 	glMatrixMode(GL_PROJECTION);
